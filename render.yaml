@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: flask-game-app
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn -w 4 -b :10000 app:app
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        value: your_secret_key
+    regions:
+      - global
