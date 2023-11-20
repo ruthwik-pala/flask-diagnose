@@ -55,6 +55,18 @@ def create_room():
 # ... [rest of your routes and logic] ...
 
 
+@app.route('/join_room', methods=['GET', 'POST'])
+def join_room():
+    if request.method == 'POST':
+        code = request.form['code']
+        room = GameRoom.query.filter_by(code=code).first()
+        if room:
+            return redirect(url_for('game_room', code=code))
+        else:
+            return render_template('join_room.html', error="Invalid room code.")
+    return render_template('join_room.html')
+
+
 @app.route('/room/<code>', methods=['GET', 'POST'])
 def game_room(code):
     room = GameRoom.query.filter_by(code=code).first()
