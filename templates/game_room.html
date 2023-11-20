@@ -15,10 +15,10 @@
     </div>
 
     <!-- Interface for the clue giver -->
-    {% if player_role == 'clue_giver' %}
+    {% if {{ player_role }} == 'clue_giver' %}
         <h3>You are the Clue Giver</h3>
         <!-- Add form or interface elements for the clue giver -->
-    {% elif player_role == 'guesser' %}
+    {% elif {{ player_role }} == 'guesser' %}
         <h3>You are the Guesser</h3>
         <!-- Interface for guess submission -->
         <form method="post" action="{{ url_for('submit_guess', code=room.code) }}">

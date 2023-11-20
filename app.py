@@ -88,7 +88,7 @@ def game_room(code):
 
             print(taboo_words_list)
             db.session.commit()
-            return render_template('game_room.html', room=room, taboo_words=taboo_words_list)
+            return render_template('game_room.html', room=room, taboo_words=taboo_words_list, player_role=player_role)
     else:
         return redirect(url_for('home'))
 
