@@ -1,20 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Game Room</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <!-- Add CSS and JavaScript as needed -->
 </head>
 <body>
-    <div class="container text-center mt-5">
-        <h1>Welcome to the Game Room</h1>
-        <p>Room Code: {{ code }}</p>
-        <!-- Add game logic and features here -->
+    <h1>Game Room: {{ room.code }}</h1>
+
+    <!-- Display the question and taboo words -->
+    <div>
+        <h2>Question: {{ room.question }}</h2>
+        <p>Taboo Words: {{ taboo_words|join(', ') }}</p>
     </div>
 
-    <!-- Bootstrap JS, Popper.js, and jQuery -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- Interface for the clue giver -->
+    {% if player_role == 'clue_giver' %}
+        <h3>You are the Clue Giver</h3>
+        <!-- Add form or interface elements for the clue giver -->
+    {% elif player_role == 'guesser' %}
+        <h3>You are the Guesser</h3>
+        <!-- Interface for guess submission -->
+        <form method="post" action="{{ url_for('submit_guess', code=room.code) }}">
+            <input type="text" name="guess" placeholder="Enter your guess">
+            <button type="submit">Submit Guess</button>
+        </form>
+    {% endif %}
+
+    <!-- Optionally, display the last guess or other game information -->
 </body>
 </html>

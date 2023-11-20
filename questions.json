@@ -1,0 +1,15 @@
+{
+    "questions": [
+        {
+            "id": 1,
+            "content": "What is the capital of France?",
+            "tabooWords": ["Paris", "City", "France"]
+        },
+        {
+            "id": 2,
+            "content": "Who wrote 'Hamlet'?",
+            "tabooWords": ["Shakespeare", "Play", "Writer"]
+        }
+      
+    ]
+}
