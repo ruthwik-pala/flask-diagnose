@@ -1,54 +1,64 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, request, redirect, url_for, render_template, session
 from flask_sqlalchemy import SQLAlchemy
 import random
 import string
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Change in production
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///game_rooms.db'
+app.config['SECRET_KEY'] = 'your_secret_key'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///game.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 db = SQLAlchemy(app)
+
 
 class GameRoom(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(6), unique=True, nullable=False)
-    # Add more fields as needed
+    players = db.Column(db.PickleType)  # Stores player identifiers
+    clue_giver = db.Column(db.String(50))
+    round = db.Column(db.Integer, default=0)
+    question = db.Column(db.String(250))
+    taboo_words = db.Column(db.String(250))
+
 
 @app.before_first_request
 def create_tables():
     db.create_all()
 
+
 @app.route('/')
 def home():
     return render_template('home.html')
+
 
 @app.route('/create_room', methods=['GET', 'POST'])
 def create_room():
     if request.method == 'POST':
         code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
-        new_room = GameRoom(code=code)
+        new_room = GameRoom(code=code, players=[], round=1)
         db.session.add(new_room)
         db.session.commit()
         return redirect(url_for('game_room', code=code))
     return render_template('create_room.html')
 
-@app.route('/join_room', methods=['GET', 'POST'])
+
+@app.route('/join_room', methods=['POST'])
 def join_room():
-    if request.method == 'POST':
-        code = request.form['code']
-        room = GameRoom.query.filter_by(code=code).first()
-        if room:
-            return redirect(url_for('game_room', code=code))
-        else:
-            return render_template('join_room.html', error="Invalid room code.")
-    return render_template('join_room.html')
+    code = request.form['code']
+    room = GameRoom.query.filter_by(code=code).first()
+    if room and len(room.players) < 2:
+        return redirect(url_for('game_room', code=code))
+    return redirect(url_for('home'))
+
 
 @app.route('/room/<code>')
 def game_room(code):
     room = GameRoom.query.filter_by(code=code).first()
     if room:
-        return render_template('game_room.html', code=code)
-    else:
-        return redirect(url_for('home'))
+        # Game logic here
+        return render_template('game_room.html', room=room)
+    return redirect(url_for('home'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
