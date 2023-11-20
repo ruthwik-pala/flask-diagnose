@@ -72,16 +72,21 @@ def game_room(code):
     room = GameRoom.query.filter_by(code=code).first()
     if room:
         player_role = "guesser" if request.remote_addr == room.guesser else "clue_giver"
+        print(player_role)
         if request.method == 'POST':
             if player_role == "clue_giver":
                 room.question = request.form.get('question')
                 taboo_words_list = room.taboo_words.split(
                     ',') if room.taboo_words else []
+                print("clue giver")
 
             else:
                 room.guess = request.form.get('guess')
                 taboo_words_list = room.taboo_words.split(
                     ',') if room.taboo_words else []
+                print("guessor")
+
+            print(taboo_words_list)
             db.session.commit()
         return render_template('game_room.html', room=room, taboo_words=taboo_words_list)
     else:
