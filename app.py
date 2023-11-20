@@ -80,6 +80,8 @@ def game_room(code):
 
             else:
                 room.guess = request.form.get('guess')
+                taboo_words_list = room.taboo_words.split(
+                    ',') if room.taboo_words else []
             db.session.commit()
         return render_template('game_room.html', room=room, taboo_words=taboo_words_list)
     else:
